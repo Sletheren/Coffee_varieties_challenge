@@ -65,16 +65,18 @@ To filter through varieties,
 [DELETE] localhost:8000/api/varieties?query=value.....
 
 Where the Queries can be as follows:
-| Query | Type |
-| ----- | ---- |
-| name | string |
-| bean_size  | string  |
-| quality_potential  | string  |
-| yield  | string  |
-| leaf_rust  | string  |
-| coffee_berry_disease  | string  |
-| nematodes  | string  |
-| producing_countries  | Array  |
+
+| Query         | Type |
+| ------------ | ----------- |
+| name | String |
+| bean_size | String |
+| quality_potential | String |
+| yield | String |
+| leaf_rust | String |
+| coffee_berry_disease | String |
+| nematodes | String |
+| producing_countries | Array |
+
 
 Every Query is Optional, but it has to match the expect type (because we validate the Request queries using our middleware)
 
