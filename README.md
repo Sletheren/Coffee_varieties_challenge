@@ -1,3 +1,91 @@
+# Run the server
+To run the server on developement (with node watching file changes) mode run the following command
+```
+npm run dev
+```
+
+Or to run the server on production mode, run the following command
+```
+npm run start
+```
+
+# API & The Supported Requests
+The API will be accessible via: `/api/varieties`
+
+### TO GET ALL VARIETIES
+A GET Request to this end point
+[GET] localhost:8000/api/varieties
+
+### TO GET A VARIETY BY ID
+A GET Request to this end point, `:id` is the ID of the wanted variety
+[GET] localhost:8000/api/varieties/:id
+
+### TO CREATE A VARIETY
+A POST Request to this end point
+[POST] localhost:8000/api/varieties
+* The payload must be like:
+```json
+{
+  "name": "Batian",
+  "bean_size": "VERY_LARGE",
+  "quality_potential": "VERY_GOOD",
+  "yield": "HIGH",
+  "disease_resistancy": [{
+      "leaf_rust": "TOLERANT"
+    },
+    {
+      "coffee_berry_disease": "RESISTANT"
+    },
+    {
+      "nematodes": "SUSCEPTIBLE"
+    }
+  ],
+  "producing_countries": [
+    "Kenia"
+  ]
+}
+```
+### TO UPDATE A VARIETY
+A PUT Request to this end point, with `:id` is the ID of the wanted variety
+[PUT] localhost:8000/api/varieties/:id
+
+* To update the name per example, the payload will look like:
+```json
+{
+  "name": "YUMMY"
+}
+```
+### TO REMOVE A VARIETY
+A DELETE Request to this end point, `:id` is the ID of the variety to remove
+[DELETE] localhost:8000/api/varieties/:id
+
+
+### TO FILTER VERITIES
+To filter through varieties, 
+[DELETE] localhost:8000/api/varieties?query=value.....
+
+Where the Queries can be as follows:
+| Query | Type |
+| ----- | ---- |
+| name | string |
+| bean_size  | string  |
+| quality_potential  | string  |
+| yield  | string  |
+| leaf_rust  | string  |
+| coffee_berry_disease  | string  |
+| nematodes  | string  |
+| producing_countries  | Array  |
+
+Every Query is Optional, but it has to match the expect type (because we validate the Request queries using our middleware)
+
+## TO TEST
+To run the tests, run the following command: 
+```
+npm run test
+```
+
+
+
 # Arabica Coffee Varieties of the World ☕️
 
 Coffee, that liquid black gold that most developers are completely hooked on and
