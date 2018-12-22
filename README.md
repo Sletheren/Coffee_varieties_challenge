@@ -1,4 +1,4 @@
-# Run the server
+### Run the server
 To run the server on developement (with node watching file changes) mode run the following command
 ```
 npm run dev
@@ -9,21 +9,49 @@ Or to run the server on production mode, run the following command
 npm run start
 ```
 
-# API & The Supported Requests
+### API & The Supported Requests
 The API will be accessible via: `/api/varieties`
 
-### TO GET ALL VARIETIES
-A GET Request to this end point
-[GET] localhost:8080/api/varieties
 
-### TO GET A VARIETY BY ID
-A GET Request to this end point, `:id` is the ID of the wanted variety
-[GET] localhost:8080/api/varieties/:id
+### Live demo:
+You can test the API in real time, by accessing this URL:
 
-### TO CREATE A VARIETY
-A POST Request to this end point
-[POST] localhost:8080/api/varieties
-* The payload must be like:
+```http
+https://lit-bayou-77243.herokuapp.com/api/varieties
+```
+____
+
+### Operations & Requests
+
+Different type of possible requests
+
+#### `Create new variety`
+
+**Endpoint:**
+```http
+POST http://localhost:8080/api/varieties
+```
+**Request payload:**
+* **Body:**
+  * `name`: the name of coffe variety, must be of string type, optional
+  * `bean_size`: the bean size of coffe variety, must be of string type, optional
+  * `quality_potential`: the quality potential of coffe variety, must be of string type, optional
+  * `yield`: the yield of coffe variety, must be of string type, optional
+  * `disease_resistancy`: an array of objects:
+    * `{key}`: the disease name key, must be of string type
+    * `{value}`: the disease resistancy value, must be of string type, accepts either `TOLERANT`, `RESISTANT`, `SUSCEPTIBLE`
+
+  * `producing_countries`: an array of countries:
+    * `{country}`: the country name, must be of string type
+
+**Response:**
+* **Headers:** ...
+* **Body:**
+	* `status`: 200
+    * `message`: "CREATED"
+    * `data`: ...
+
+**Example request:**
 ```json
 {
   "name": "Batian",
@@ -45,46 +73,140 @@ A POST Request to this end point
   ]
 }
 ```
-### TO UPDATE A VARIETY
-A PUT Request to this end point, with `:id` is the ID of the wanted variety
-[PUT] localhost:8080/api/varieties/:id
 
-* To update the name per example, the payload will look like:
-```json
-{
-  "name": "YUMMY"
-}
+____
+
+#### `Filter varieties`
+
+**Endpoint:**
+```http
+GET http://localhost:8080/api/varieties
 ```
-### TO REMOVE A VARIETY
-A DELETE Request to this end point, `:id` is the ID of the variety to remove
-[DELETE] localhost:8080/api/varieties/:id
+**Request payload:**
+* **Query parameters:**
+  * `name`: the name of coffe variety, must be of string type, optional
+  * `bean_size`: the bean size of coffe variety, must be of string type, optional
+  * `quality_potential`: the quality potential of coffe variety, must be of string type, optional
+  * `yield`: the yield of coffe variety, must be of string type, optional
+  * A key-value association of, optional:
+    * `{key}`: the disease name key, must be of string type
+    * `{value}`: the disease resistancy value, must be of string type, accepts either `TOLERANT`, `RESISTANT`, `SUSCEPTIBLE`
+
+  * `producing_countries`: an array of countries, optional:
+    * `{country}`: the country name, must be of string type
+
+**Response:**
+* **Headers:** ...
+* **Body:**
+	* `status`: 200
+    * `message`: "OK"
+    * `data`: a collection of coffee varieties that match the filters
+
+**Example request:**
+```http
+http://localhost:8080/api/varieties?name=Batian&bean_size=VERY_LARGE
+```
+
+____
+
+#### `Get a variety by ID`
+
+**Endpoint:**
+```http
+GET http://localhost:8080/api/varieties/:id
+```
+**Request payload:**
+* `:id`: the id of the variety (Number)
+
+**Response:**
+* **Headers:** ...
+* **Body:**
+	* `status`: 200
+    * `message`: "OK"
+    * `data`: ...
 
 
-### TO FILTER VERITIES
-To filter through varieties, 
-[DELETE] localhost:8080/api/varieties?query=value.....
+____
 
-Where the Queries can be as follows:
+#### `Update a variety by its ID`
 
-| Query         | Type |
-| ------------ | ----------- |
-| name | String |
-| bean_size | String |
-| quality_potential | String |
-| yield | String |
-| leaf_rust | String |
-| coffee_berry_disease | String |
-| nematodes | String |
-| producing_countries | Array |
+**Endpoint:**
+```http
+PUT http://localhost:8080/api/varieties/:id
+```
+**Request payload:**
+* `:id`: the id of the variety
+* **Body:**
+  * `name`: the name of coffe variety, must be of string type, optional
+  * `bean_size`: the bean size of coffe variety, must be of string type, optional
+  * `quality_potential`: the quality potential of coffe variety, must be of string type, optional
+  * `yield`: the yield of coffe variety, must be of string type, optional
+  * `disease_resistancy`: an array of objects:
+    * `{key}`: the disease name key, must be of string type
+    * `{value}`: the disease resistancy value, must be of string type, accepts either `TOLERANT`, `RESISTANT`, `SUSCEPTIBLE`
+
+  * `producing_countries`: an array of countries:
+    * `{country}`: the country name, must be of string type
+
+**Response:**
+* **Headers:** ...
+* **Body:**
+	* `status`: 200
+    * `message`: "UPDATED"
+    * `data`: ...
+
+____
+
+#### `Delete a variety by its ID`
+
+**Endpoint:**
+```http
+DELETE http://localhost:8080/api/varieties/:id
+```
+**Request payload:**
+* `:id`: the id of the variety
+
+**Response:**
+* **Headers:** ...
+* **Body:**
+	* `status`: 200
+    * `message`: "DELETED"
+    * `data`: ...
 
 
-Every Query is Optional, but it has to match the expect type (because we validate the Request queries using our middleware)
+____
 
-## TO TEST
+### Request errors
+
+#### Examples of error responses:
+
+
+| Status Code | Message | Description |
+| ------------ | ----------- | ----------- |
+| 404 | NOT_FOUND | The ressource doesn't exist |
+| 500 | SERVER_ERROR | Generic Server error |
+| 400 | INVALID_REQUEST | The request/The request data aren't valid |
+| 400 | FAILED | The operation has been failed |
+| 400 | UPDATE_FAILD | The update has been failed |
+| 400 | DELETE_FAILD | The delete has been failed |
+
+
+
+### TO TEST
 To run the tests, run the following command: 
 ```
 npm run test
 ```
+
+
+### Continuous Integration
+I envisioned the app to have the continious Integration with (Travis CI) to make the build pipeline and deploy to heroku 
+The build pipeline consists of running a set of tests using Mocha/Chai and then a round of Linting using esLint
+
+### Enjoy :D
+
+
+
 
 
 
