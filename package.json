@@ -4,9 +4,11 @@
   "description": "Arabica coffee API",
   "main": "server.js",
   "scripts": {
-    "dev": "NODE_ENV=dev && nodemon server.js",
-    "start": "NODE_ENV=prod && node server.js",
-    "test": "NODE_ENV=test && mocha --timeout 3000"
+    "dev": "NODE_ENV=dev && nodemon src/server.js",
+    "start": "NODE_ENV=prod && node src/server.js",
+    "lint": "eslint src/.",
+    "test": "NODE_ENV=test && mocha --timeout 3000 --exit",
+    "build": "npm run lint && npm run test"
   },
   "author": "Abdelghafour Rakhma",
   "license": "ISC",
@@ -20,6 +22,12 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.2.0",
+    "eslint": "^5.10.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.9"
   }
