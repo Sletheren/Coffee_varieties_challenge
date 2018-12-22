@@ -14,15 +14,15 @@ The API will be accessible via: `/api/varieties`
 
 ### TO GET ALL VARIETIES
 A GET Request to this end point
-[GET] localhost:8000/api/varieties
+[GET] localhost:8080/api/varieties
 
 ### TO GET A VARIETY BY ID
 A GET Request to this end point, `:id` is the ID of the wanted variety
-[GET] localhost:8000/api/varieties/:id
+[GET] localhost:8080/api/varieties/:id
 
 ### TO CREATE A VARIETY
 A POST Request to this end point
-[POST] localhost:8000/api/varieties
+[POST] localhost:8080/api/varieties
 * The payload must be like:
 ```json
 {
@@ -47,7 +47,7 @@ A POST Request to this end point
 ```
 ### TO UPDATE A VARIETY
 A PUT Request to this end point, with `:id` is the ID of the wanted variety
-[PUT] localhost:8000/api/varieties/:id
+[PUT] localhost:8080/api/varieties/:id
 
 * To update the name per example, the payload will look like:
 ```json
@@ -57,12 +57,12 @@ A PUT Request to this end point, with `:id` is the ID of the wanted variety
 ```
 ### TO REMOVE A VARIETY
 A DELETE Request to this end point, `:id` is the ID of the variety to remove
-[DELETE] localhost:8000/api/varieties/:id
+[DELETE] localhost:8080/api/varieties/:id
 
 
 ### TO FILTER VERITIES
 To filter through varieties, 
-[DELETE] localhost:8000/api/varieties?query=value.....
+[DELETE] localhost:8080/api/varieties?query=value.....
 
 Where the Queries can be as follows:
 
