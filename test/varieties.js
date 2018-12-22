@@ -56,22 +56,22 @@ describe('Varieties', () => {
   describe('/POST Varieties', () => {
     it('Should add a variety', (done) => {
       const variety = {
-        name: "TEST",
-        bean_size: "VERY_LARGE",
-        quality_potential: "VERY_GOOD",
-        yield: "HIGH",
+        name: 'TEST',
+        bean_size: 'VERY_LARGE',
+        quality_potential: 'VERY_GOOD',
+        yield: 'HIGH',
         disease_resistancy: [{
-            leaf_rust: "TOLERANT"
+            leaf_rust: 'TOLERANT'
           },
           {
-            coffee_berry_disease: "RESISTANT"
+            coffee_berry_disease: 'RESISTANT'
           },
           {
-            nematodes: "SUSCEPTIBLE"
+            nematodes: 'SUSCEPTIBLE'
           }
         ],
         producing_countries: [
-          "Kenia"
+          'Kenia'
         ]
       }
       chai.request(server)
@@ -84,6 +84,54 @@ describe('Varieties', () => {
           res.body.message.should.be.eql('CREATED')
           res.body.data.should.have.property('id')
           res.body.data.id.should.be.eql(17)
+          done()
+        })
+    })
+  })
+
+  describe ('/PUT Varieties', () => {
+    it('Should update a variety', (done) => {
+      const variety = {
+        name: 'WORKS'
+      }
+      chai.request(server)
+        .put('/api/varieties/1')
+        .send(variety)
+        .end((err, res) => {
+          res.should.have.status(200)
+          res.body.should.be.a('object')
+          res.body.message.should.be.eql('UPDATED')
+          res.body.data.should.have.property('id')
+          res.body.data.id.should.be.eql(1)
+          res.body.data.name.should.be.eql('WORKS')
+          done()
+        })
+    })
+  })
+
+  describe ('/DELETE Varieties', () => {
+    it('Should remove a variety', (done) => {
+      chai.request(server)
+        .delete('/api/varieties/1')
+        .end((err, res) => {
+          res.should.have.status(200)
+          res.body.should.be.a('object')
+          res.body.message.should.be.eql('DELETED')
+          res.body.data.should.be.eql(1)
+          done()
+        })
+    })
+  })
+
+  describe ('/GET Filter Varieties', () => {
+    it('Should Get one variety', (done) => {
+      chai.request(server)
+        .get('/api/varieties?name=Bourbon')
+        .end((err, res) => {
+          res.should.have.status(200)
+          res.body.should.be.a('object')
+          res.body.message.should.be.eql('OK')
+          res.body.data.length.should.be.eql(1)
           done()
         })
     })
