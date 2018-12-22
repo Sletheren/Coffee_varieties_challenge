@@ -1,8 +1,13 @@
 language: node_js
 node_js:
-  - 'node'
+- node
 script:
-  - npm run build
+- npm run build
 branches:
   only:
-    - master
+  - master
+deploy:
+  provider: heroku
+  app: coffeechallenge
+  api_key:
+    secure: Z8saovIlDTByTgMi8DxMQgEa7Q3GCHFVLUcI/fmFkCkuY9HUuNM6iKDPz9so2Xo2qBE0ailyQmbstnw3wx1CYReycfiuVKiiIveqrmvXPLNDgHKU6jzMm9pMrqnJ+llFLKYsJpY45ww6ojdhxqcPw5OdQRRPXSDRHf4cuVYYBrwYvmfVyHy1nbpDhb6cgYPrE3hm2AhraUac6yEECDb0H/wZtoArk8I83ctu/TNJTjSQ7XAqlOgXiu5TyjcN07l8A+stOirH0WMUZyHKutcuM9ox/MDKiy6PpXt10tsWS9YJMO7FcXReAm/QYGqbHJfqYSDnrt62YLaB+MRfB/lDTgxt//4sF5MXLveIKJW1EGfgSrjpWz46KyrHT6FY73zcZEjSJUh6Hbu+YOpCbsuy1K47VG0RV2J4tPPMsiBrCXdutjqgQdCnmVl+uyiQqjKQkoel5drR4787/zAZBAV2tU2EJEzvvxkzO70vBJceSLi0yXnhgZdsdINkEC6+6TFfT20DsUu8hUff9H3UDIgemdl+RQd4PqlI4n7YIsLfJ41MOWhXnPmsU5PHT0OpIrImdNeS+MnMYCjdW7Vo5/0tzEpg8Hhs7R0POscy9isAmKsdDkRW9FMMCrU8VwMmqUEa19r+5GZrOv0J94ayssSyDoYzgrRjz57sOr3DL0PVl1M=
