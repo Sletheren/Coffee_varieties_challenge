@@ -7,10 +7,9 @@
  * We add an ID attribute to make the database as real as possible.
  * 
  */
-let _instance = null
 class Database {
-  constructor () {
-    if (process.env.NODE_ENV === 'test' || !_instance) {
+  constructor() {
+    if (process.env.NODE_ENV === 'test' || !Database._instance) {
       const data = require('./data.json')
       this.data = data.map((item, index) => {
         item['id'] = index + 1
@@ -18,80 +17,74 @@ class Database {
       })
       this.lastId = this.data.length
 
-      _instance = this
+      Database._instance = this
     }
-    return _instance
+    return Database._instance
   }
 
   /* Imitate the AutoIncrement functionality of DBMS */
-  getNextId () {
+  getNextId() {
     this.lastId++
     return this.lastId
   }
 
   /* Get all the data from the (database SELECT * FROM Varieties) kinda thing */
-  getAll () {
+  getAll() {
     return this.data
   }
 
   /* Get a variety by ID */
-  findById (id) {
+  findById(id) {
     return this.data.filter(item => item.id === id)
   }
 
-  /**
-   * Filter the database by the queries from the user
-   * It accepts many queries at once
-   * We're using AND to search
-   * And to not make it to strict, we convert everything to lower case ;)
-   * 
-   * @param {Object} queries 
-  */
-  findByProps (queries) {
-    const props = Object.keys(queries)
-    return this.data.filter(item => {
-      for (let i=0; i<props.length; i++) {
-        const currentVal = item[props[i]]
-        const searchedVal = queries[props[i]]
-        /**
-         * Situation 1: the searchable item is a String or a number
-         */
-        if (['number', 'string'].includes(typeof searchedVal) && ['number', 'string'].includes(typeof currentVal)) {
-          if (`${currentVal}`.toLowerCase().indexOf(`${searchedVal}`.toLowerCase()) === -1) return false
-        }
-        /**
-         * Situation 2: the searchable item is an array of objects against an array of objects
-         */
-        else if (Array.isArray(currentVal) && Array.isArray(searchedVal) && typeof currentVal[0] === 'object' && typeof searchedVal[0] === 'object') {
-          const result = currentVal.some(c => searchedVal.some(s => this.isObjectEquals(c, s)))
-          if (!result) return false
-        }
-        /**
-         * Situation 3: the searchable item is an array of strings against an array strings
-         */
-        
-        else if (Array.isArray(currentVal) && Array.isArray(searchedVal) && typeof currentVal[0] === 'string' && typeof searchedVal[0] === 'string') {
-          const A = currentVal.map(c => c.toLowerCase())
-          const B = searchedVal.map(c => c.toLowerCase())
-          const result = this.arrayContainsArray(A, B)
-          if (!result) return false
-        }
-        /**
-         * Situation 4: the searchable item is a String against an array of strings
-         */
-        else if (Array.isArray(currentVal) && typeof currentVal[0] === 'string' && typeof searchedVal === 'string') {
-          const result = currentVal.filter(c => c.toLowerCase() === searchedVal.toLowerCase())
-          if (result.length === 0) return false
-        }
-        /**
-         * Situation 5: Some other unknown type
-         */
-        else {
-          return false
-        }
+  normalize(value) {
+    if (typeof value === 'object') {
+      for (const key in value) {
+        if (!value.hasOwnProperty(key)) continue
+        value[key] = this.normalize(value[key])
       }
-      return true
-    })
+      return value
+    } else {
+      return value.toLowerCase()
+    }
+  }
+
+  findByProps(filters) {
+    filters = this.normalize(filters)
+    return this.data.filter(item => this.matchFilters(filters, item))
+  }
+  matchFilters(filters, item) {
+    for (const filterKey in filters) {
+      if (!filters.hasOwnProperty(filterKey)) continue
+      const filterValue = filters[filterKey]
+      if (!this.matchKeyValue(filterKey, filterValue, item))
+        return false
+    }
+    return true
+  }
+
+  matchString(needle, haystack) {
+    haystack = `${haystack}`
+    return haystack === needle || haystack.toLowerCase().includes(needle)
+  }
+
+  matchKeyValue(filterKey, filterValue, item, found = { result: false}) {
+    for (const itemKey in item) {
+      if (found.result) break
+      if (!item.hasOwnProperty(itemKey)) continue
+      const itemValue = item[itemKey]
+      if (typeof itemValue === 'object') {
+        if (Array.isArray(filterValue) && Array.isArray(itemValue) && typeof itemValue[0] !== 'object') {
+          found.result = this.isSupersetOf(itemValue, filterValue)
+        } else {
+          this.matchKeyValue(filterKey, filterValue, itemValue, found)
+        }
+      } else if (filterKey === itemKey && this.matchString(filterValue, itemValue)) {
+        found.result = true
+      }
+    }
+    return found.result
   }
 
   /**
@@ -99,8 +92,11 @@ class Database {
    * We can add checking to not allow two varieties with the same name later... 
    * @param {Object} data 
    */
-  create (data) {
-    const item = { id: this.getNextId(), ...data }
+  create(data) {
+    const item = {
+      id: this.getNextId(),
+      ...data
+    }
     this.data.push(item)
     return item
   }
@@ -110,29 +106,31 @@ class Database {
    * @param {Number} id 
    * @param {Object} data 
    */
-  update (id, data) {
-   const item = this.data.filter(item => item.id === id)
-   if (!item.length) {
-     return false
-   }
-   /* Cheap way to not allow ID injection or the front-end developer didn't have his morning coffee and sent it with the payload */
-   delete data['id']
+  update(id, data) {
+    const item = this.data.filter(item => item.id === id)
+    if (!item.length) {
+      return false
+    }
+    /* Cheap way to not allow ID injection or the front-end developer didn't have his morning coffee and sent it with the payload */
+    delete data['id']
 
-   const updated = {...item[0], ...data}
-   this.data = this.data.map(item => {
-     if (item.id === id) {
-       item = updated
-     }
-     return item
-   })
-   return updated
+    const updated = { ...item[0],
+      ...data
+    }
+    this.data = this.data.map(item => {
+      if (item.id === id) {
+        item = updated
+      }
+      return item
+    })
+    return updated
   }
 
   /**
    * Deleting a variety after checking if it exists
    * @param {Number} id 
    */
-  delete (id) {
+  delete(id) {
     const item = this.data.filter(item => item.id === id)
     if (!item.length) {
       return false
@@ -141,30 +139,16 @@ class Database {
     return id
   }
 
-  isObjectEquals(a, b) {
-    var aProps = Object.getOwnPropertyNames(a)
-    var bProps = Object.getOwnPropertyNames(b)
-    if (aProps.length != bProps.length) {
-      return false
-    }
-    for (var i = 0; i < aProps.length; i++) {
-      var propName = aProps[i]
-      if (`${a[propName]}`.toLowerCase() !== `${b[propName]}`.toLowerCase()) {
-        return false
-      }
-    }
-    return true
-  }
-
-  arrayContainsArray (superset, subset) {
+  isSupersetOf(superset, subset) {
+    superset = superset.map(c => c.toLowerCase())
     if (subset.length === 0) {
+      return true
+    }
+    if (superset.length === 0) {
       return false
     }
-    return subset.every(value => {
-      return (superset.indexOf(value) >= 0);
-    })
+    return subset.every(value => superset.indexOf(value) !== -1)
   }
-
 
 }
 
