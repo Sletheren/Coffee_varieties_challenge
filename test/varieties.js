@@ -1,9 +1,9 @@
-const Database = require('../Database')
+const Database = require('../src/Database')
 const chaiHttp = require('chai-http')
 const chai = require('chai')
 const should = chai.should()
 
-const server = require('../server')
+const server = require('../src/server')
 let DB
 
 chai.use(chaiHttp)
