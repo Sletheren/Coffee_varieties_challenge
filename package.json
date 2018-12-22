@@ -7,7 +7,7 @@
     "dev": "NODE_ENV=dev && nodemon src/server.js",
     "start": "NODE_ENV=prod && node src/server.js",
     "lint": "eslint src/.",
-    "test": "NODE_ENV=test && mocha --timeout 3000 --exit",
+    "test": "export NODE_ENV=test && mocha --timeout 3000 --exit",
     "build": "npm run lint && npm run test"
   },
   "author": "Abdelghafour Rakhma",

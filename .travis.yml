@@ -6,3 +6,7 @@ script:
 branches:
   only:
     - master
+deploy:
+  provider: heroku
+  api_key:
+    secure: "b06e7a2b-56bb-4e29-b795-ba0f69690d03"
