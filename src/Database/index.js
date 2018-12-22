@@ -1,14 +1,14 @@
 /**
- * 
+ *
  * Fancy little class that will imitate a Database/DBMS
  * Just to not feel too bored handling raw JSON :)
  * Made it as a Singleton, to make sure the dataSource is shared across the whole application and _instance is a flag to help us know if it has been initilized the first time or not.
  * For Testing, we make it not as a singleton (as a convention)
  * We add an ID attribute to make the database as real as possible.
- * 
+ *
  */
 class Database {
-  constructor() {
+  constructor () {
     if (process.env.NODE_ENV === 'test' || !Database._instance) {
       const data = require('./data.json')
       this.data = data.map((item, index) => {
@@ -23,22 +23,22 @@ class Database {
   }
 
   /* Imitate the AutoIncrement functionality of DBMS */
-  getNextId() {
+  getNextId () {
     this.lastId++
     return this.lastId
   }
 
   /* Get all the data from the (database SELECT * FROM Varieties) kinda thing */
-  getAll() {
+  getAll () {
     return this.data
   }
 
   /* Get a variety by ID */
-  findById(id) {
+  findById (id) {
     return this.data.filter(item => item.id === id)
   }
 
-  normalize(value) {
+  normalize (value) {
     if (typeof value === 'object') {
       for (const key in value) {
         if (!value.hasOwnProperty(key)) continue
@@ -50,26 +50,25 @@ class Database {
     }
   }
 
-  findByProps(filters) {
+  findByProps (filters) {
     filters = this.normalize(filters)
     return this.data.filter(item => this.matchFilters(filters, item))
   }
-  matchFilters(filters, item) {
+  matchFilters (filters, item) {
     for (const filterKey in filters) {
       if (!filters.hasOwnProperty(filterKey)) continue
       const filterValue = filters[filterKey]
-      if (!this.matchKeyValue(filterKey, filterValue, item))
-        return false
+      if (!this.matchKeyValue(filterKey, filterValue, item)) return false
     }
     return true
   }
 
-  matchString(needle, haystack) {
+  matchString (needle, haystack) {
     haystack = `${haystack}`
     return haystack === needle || haystack.toLowerCase().includes(needle)
   }
 
-  matchKeyValue(filterKey, filterValue, item, found = { result: false}) {
+  matchKeyValue (filterKey, filterValue, item, found = { result: false }) {
     for (const itemKey in item) {
       if (found.result) break
       if (!item.hasOwnProperty(itemKey)) continue
@@ -89,10 +88,10 @@ class Database {
 
   /**
    * Create a new veriety.
-   * We can add checking to not allow two varieties with the same name later... 
-   * @param {Object} data 
+   * We can add checking to not allow two varieties with the same name later...
+   * @param {Object} data
    */
-  create(data) {
+  create (data) {
     const item = {
       id: this.getNextId(),
       ...data
@@ -103,10 +102,10 @@ class Database {
 
   /**
    * Updating a variety after checking if it exists
-   * @param {Number} id 
-   * @param {Object} data 
+   * @param {Number} id
+   * @param {Object} data
    */
-  update(id, data) {
+  update (id, data) {
     const item = this.data.filter(item => item.id === id)
     if (!item.length) {
       return false
@@ -128,18 +127,18 @@ class Database {
 
   /**
    * Deleting a variety after checking if it exists
-   * @param {Number} id 
+   * @param {Number} id
    */
-  delete(id) {
+  delete (id) {
     const item = this.data.filter(item => item.id === id)
     if (!item.length) {
       return false
     }
-    this.data = this.data.filter(item => item.id != id)
+    this.data = this.data.filter(item => item.id !== id)
     return id
   }
 
-  isSupersetOf(superset, subset) {
+  isSupersetOf (superset, subset) {
     superset = superset.map(c => c.toLowerCase())
     if (subset.length === 0) {
       return true
@@ -149,7 +148,6 @@ class Database {
     }
     return subset.every(value => superset.indexOf(value) !== -1)
   }
-
 }
 
 module.exports = Database

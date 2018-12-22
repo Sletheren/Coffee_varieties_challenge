@@ -6,19 +6,18 @@ const middlewares = require('../Middlewares')
 const controller = require('../Controllers/VarietiesController')
 
 /**
- * 
+ *
  * Every route we attach a middlware to verify the type of data sent
  * For the routes that we send the ID param, we parse the ID as a number using `parseParamId`
  * We process every route with the adequat controller's action
- * 
+ *
  * validator.body: Validates the body of the request using the schemas we define above
  * validator.params: Vaidates the params of the request
  * validator.query: valudates the queryParams of the request
- * 
+ *
  */
 
 const verieties = path => {
-  
   router.get(`${path}`,
     validator.query(schemas.all.query),
     controller.get
@@ -46,7 +45,5 @@ const verieties = path => {
 
   return router
 }
-
-
 
 module.exports = verieties

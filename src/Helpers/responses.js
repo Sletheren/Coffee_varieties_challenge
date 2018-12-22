@@ -1,8 +1,8 @@
 /**
  * Helper functions to normalize the responses we send to the end-user
- * 
- * @param {String} message 
- * @param {Object} data 
+ *
+ * @param {String} message
+ * @param {Object} data
  */
 
 const success = (data, message) => ({

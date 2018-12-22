@@ -11,4 +11,3 @@ const varieties = require('./varieties')
 router.use(varieties('/varieties'))
 
 module.exports = router
-

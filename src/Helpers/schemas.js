@@ -1,11 +1,11 @@
 const Joi = require('joi')
 
 /**
- * 
+ *
  * Schemas for our main routes!
  * Each route can have 3 schemas (params, query and body)
  * each schema sets validation rules to the data that request contains
- * 
+ *
  */
 
 const Schemas = {
