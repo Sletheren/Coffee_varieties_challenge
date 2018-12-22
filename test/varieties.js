@@ -8,7 +8,7 @@ let DB
 
 chai.use(chaiHttp)
 
-//Our parent block
+// Our parent block
 describe('Varieties', () => {
   /* Initializing Our Database Before every test */
   beforeEach((done) => {
