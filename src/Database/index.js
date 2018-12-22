@@ -38,22 +38,13 @@ class Database {
     return this.data.filter(item => item.id === id)
   }
 
-  normalize (value) {
-    if (typeof value === 'object') {
-      for (const key in value) {
-        if (!value.hasOwnProperty(key)) continue
-        value[key] = this.normalize(value[key])
-      }
-      return value
-    } else {
-      return value.toLowerCase()
-    }
-  }
-
+  /* Search by filters */
   findByProps (filters) {
     filters = this.normalize(filters)
     return this.data.filter(item => this.matchFilters(filters, item))
   }
+
+  /* Helper function for matching filters against data using conjunction with short-cutting */
   matchFilters (filters, item) {
     for (const filterKey in filters) {
       if (!filters.hasOwnProperty(filterKey)) continue
@@ -63,11 +54,16 @@ class Database {
     return true
   }
 
+  /* Helper function to match if a string contains a substring */
   matchString (needle, haystack) {
     haystack = `${haystack}`
     return haystack === needle || haystack.toLowerCase().includes(needle)
   }
 
+  /**
+   * Helper function to loop through the item keys and match them against the filters depending on the data type
+   * If it's an object we do recursive short-cutting until it return true for a found value
+   */
   matchKeyValue (filterKey, filterValue, item, found = { result: false }) {
     for (const itemKey in item) {
       if (found.result) break
@@ -84,6 +80,19 @@ class Database {
       }
     }
     return found.result
+  }
+
+  /* Simple helper function to make the string to lower case, to make the matching case insensitive  */
+  normalize (value) {
+    if (typeof value === 'object') {
+      for (const key in value) {
+        if (!value.hasOwnProperty(key)) continue
+        value[key] = this.normalize(value[key])
+      }
+      return value
+    } else {
+      return value.toLowerCase()
+    }
   }
 
   /**
@@ -138,6 +147,11 @@ class Database {
     return id
   }
 
+  /**
+   * Helper function to check if left(superset) is a superset of right(subset)
+   * @param {Array} superset
+   * @param {Array} subset
+   */
   isSupersetOf (superset, subset) {
     superset = superset.map(c => c.toLowerCase())
     if (subset.length === 0) {
