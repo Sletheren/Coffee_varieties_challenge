@@ -16,7 +16,9 @@ const Schemas = {
       bean_size: Joi.string(),
       quality_potential: Joi.string(),
       yield: Joi.string(),
-      disease_resistancy: Joi.array().items(Joi.any()),
+      leaf_rust: Joi.string(),
+      coffee_berry_disease: Joi.string(),
+      nematodes: Joi.string(),
       producing_countries: Joi.array().items(Joi.string())
     },
     body: {}
