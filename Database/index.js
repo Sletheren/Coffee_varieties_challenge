@@ -60,19 +60,27 @@ class Database {
           if (`${currentVal}`.toLowerCase().indexOf(`${searchedVal}`.toLowerCase()) === -1) return false
         }
         /**
-         * Situation 2: the searchable item is a String against an array
+         * Situation 2: the searchable item is an array of objects against an array of objects
          */
-        else if (typeof currentVal === 'object' && Array.isArray(currentVal) && typeof searchedVal === 'string') {
-          const result = currentVal.filter(c => c.toLowerCase() === searchedVal.toLowerCase())
-          if (result.length === 0) return false
+        else if (Array.isArray(currentVal) && Array.isArray(searchedVal) && typeof currentVal[0] === 'object' && typeof searchedVal[0] === 'object') {
+          const result = currentVal.some(c => searchedVal.some(s => this.isObjectEquals(c, s)))
+          if (!result) return false
         }
         /**
-         * Situation 3: the searchable item is an array against an array
+         * Situation 3: the searchable item is an array of strings against an array strings
          */
-        else if (typeof currentVal === 'object' && Array.isArray(currentVal) && Array.isArray(searchedVal)) {
+        
+        else if (Array.isArray(currentVal) && Array.isArray(searchedVal) && typeof currentVal[0] === 'string' && typeof searchedVal[0] === 'string') {
           const A = currentVal.map(c => c.toLowerCase())
           const B = searchedVal.map(c => c.toLowerCase())
-          const result = B.filter(elem => A.includes(elem))
+          const result = this.arrayContainsArray(A, B)
+          if (!result) return false
+        }
+        /**
+         * Situation 4: the searchable item is a String against an array of strings
+         */
+        else if (Array.isArray(currentVal) && typeof currentVal[0] === 'string' && typeof searchedVal === 'string') {
+          const result = currentVal.filter(c => c.toLowerCase() === searchedVal.toLowerCase())
           if (result.length === 0) return false
         }
         /**
@@ -132,6 +140,31 @@ class Database {
     this.data = this.data.filter(item => item.id != id)
     return id
   }
+
+  isObjectEquals(a, b) {
+    var aProps = Object.getOwnPropertyNames(a)
+    var bProps = Object.getOwnPropertyNames(b)
+    if (aProps.length != bProps.length) {
+      return false
+    }
+    for (var i = 0; i < aProps.length; i++) {
+      var propName = aProps[i]
+      if (`${a[propName]}`.toLowerCase() !== `${b[propName]}`.toLowerCase()) {
+        return false
+      }
+    }
+    return true
+  }
+
+  arrayContainsArray (superset, subset) {
+    if (subset.length === 0) {
+      return false
+    }
+    return subset.every(value => {
+      return (superset.indexOf(value) >= 0);
+    })
+  }
+
 
 }
 
